@@ -12,7 +12,7 @@ export default class AuthMiddleware extends Middleware {
   async commonApiCreate() {
     const { ctx, next, app: { service: { redis } } } = this;
     // console.log(ctx.path);
-    if(ctx.path === '/') {
+    if(ctx.path === '/webapp') {
       ctx.body = page;
       return;
     }

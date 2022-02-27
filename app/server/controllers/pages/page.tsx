@@ -5,9 +5,9 @@ import * as path from 'path';
 
 let page = '';
 
-if(process.env.READ_ENV === 'prod') {
-  page = fs.readFileSync(path.join(__dirname, '../../../public/index.html'), 'utf-8');
-}
+// if(process.env.READ_ENV === 'prod') {
+//   page = fs.readFileSync(path.join(__dirname, '../../../public/index.html'), 'utf-8');
+// }
 
 @Route('/')
 export default class Page extends Controller {

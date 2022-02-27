@@ -65,6 +65,6 @@ export = class Config implements IServerConfig {
   };
 
 
-  openResource = ['static', 'static/drawio/src/main/webapp']
+  openResource = ['static', 'static/drawio/src/main/webapp', 'static/drawio/src/main']
   
 };
