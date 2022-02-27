@@ -65,6 +65,24 @@ export = class Config implements IServerConfig {
   };
 
 
-  openResource = ['static', 'static/drawio/src/main/webapp', 'static/drawio/src/main']
-  
+  openResource = [
+    {
+      openPath: 'static',
+      options: {
+        maxAge: 60 * 60 * 1000 * 2
+      }
+    },
+    {
+      openPath: 'static/drawio/src/main',
+      options: {
+        maxAge: 60 * 60 * 1000 * 2
+      }
+    },
+    {
+      openPath: 'static/drawio/src/main/webapp',
+      options: {
+        maxAge: 60 * 60 * 1000 * 2
+      }
+    }
+  ]
 };

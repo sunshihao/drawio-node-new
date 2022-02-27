@@ -33,6 +33,7 @@
     "import-html-entry": "^1.11.1",
     "js-cookie": "^3.0.1",
     "jsonwebtoken": "^8.5.1",
+    "koa-compress": "^5.1.0",
     "koa-static": "^5.0.0",
     "md5": "^2.3.0",
     "mobx": "^6.3.0",

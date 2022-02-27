@@ -3,11 +3,22 @@ import { getCommonApi } from '../../common/util';
 
 import fs from 'fs';
 import path from 'path';
+import koaCompress from 'koa-compress';
+
 
 const page = fs.readFileSync(path.join(process.cwd(), './static/drawio/src/main/webapp/index.html'), 'utf-8');
 
 @MiddleClass()
 export default class AuthMiddleware extends Middleware {
+  @Middle('front')
+  async acompress() {
+    const { ctx, next } = this;
+    if (koaCompress) {
+      await koaCompress({ threshold: 1024, br: false })(ctx, next);
+    } else {
+      await next();
+    }
+  }
   @Middle('front')
   async commonApiCreate() {
     const { ctx, next, app: { service: { redis } } } = this;
