@@ -17,15 +17,15 @@ mxUtils.extend(GraphViewer, mxEventSource);
  * Redirects editing to absolue URLs.
  */
 // GraphViewer.prototype.editBlankUrl = 'https://app.diagrams.net/';
-GraphViewer.prototype.editBlankUrl = 'http://localhost:2008/';
-
+// GraphViewer.prototype.editBlankUrl = 'http://localhost:2008/';
+GraphViewer.prototype.editBlankUrl = '/webapp';
 
 /**
  * Base URL for relative images.
  */
 // GraphViewer.prototype.imageBaseUrl = 'https://viewer.diagrams.net/';
-GraphViewer.prototype.imageBaseUrl = 'http://localhost:2008/';
-
+// GraphViewer.prototype.imageBaseUrl = 'http://localhost:2008/';
+GraphViewer.prototype.imageBaseUrl = '/webapp';
 /**
  * Redirects editing to absolue URLs.
  */

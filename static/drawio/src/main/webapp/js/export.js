@@ -4,7 +4,7 @@ var GOOGLE_APPS_MAX_AREA = 25000000;
 var GOOGLE_SHEET_MAX_AREA = 1048576; //1024x1024
 
 //TODO Add support for loading math from a local folder
-Editor.initMath((remoteMath? 'https://app.diagrams.net/' : '') + 'math/MathJax.js');
+Editor.initMath((remoteMath? 'https://app.diagrams.net/' : '') + 'webapp/math/MathJax.js');
 
 function render(data)
 {

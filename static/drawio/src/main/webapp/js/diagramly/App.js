@@ -1012,8 +1012,8 @@ App.main = function(callback, createUi)
 			else
 			{
 				mxStencilRegistry.allowEval = false;
-				App.loadScripts(['js/shapes-14-6-5.min.js', 'js/stencils.min.js',
-					'js/extensions.min.js'], realMain);
+				App.loadScripts(['webapp/js/shapes-14-6-5.min.js', 'webapp/js/stencils.min.js',
+					'webapp/js/extensions.min.js'], realMain);
 			}
 		}, function(xhr)
 		{
@@ -3684,19 +3684,21 @@ App.prototype.showSplash = function(force)
 		var rowLimit = (serviceCount == 4) ? 2 : 3;
 
 		// zhaodeezhu 点击稍后在选择的按钮
-		var prev = Editor.useLocalStorage;
-		this.createFile(this.defaultFilename,
-			null, null, null, null, null, null, true);
-		Editor.useLocalStorage = prev;
+		// var prev = Editor.useLocalStorage;
+		// console.log('我是初始要执行的----->');
+		// console.log(Editor.useLocalStorage);
+		// this.createFile(this.defaultFilename,
+		// 	null, null, null, null, null, null, true);
+		// Editor.useLocalStorage = prev;
+		console.log('我是要执行的----->')
+		var dlg = new StorageDialog(this, mxUtils.bind(this, function()
+		{
+			this.hideDialog();
+			showSecondDialog();
+		}), rowLimit);
 		
-		// var dlg = new StorageDialog(this, mxUtils.bind(this, function()
-		// {
-		// 	this.hideDialog();
-		// 	showSecondDialog();
-		// }), rowLimit);
-		
-		// this.showDialog(dlg.container, (rowLimit < 3) ? 200 : 300,
-		// 	((serviceCount > 3) ? 320 : 210), true, false);
+		this.showDialog(dlg.container, (rowLimit < 3) ? 200 : 300,
+			((serviceCount > 3) ? 320 : 210), true, false);
 	}
 	else if (urlParams['create'] == null)
 	{
@@ -3919,6 +3921,7 @@ App.prototype.showSaveFilePicker = function(success, error, opts)
  */
 App.prototype.pickFile = function(mode)
 {
+	console.log('pickFile');
 	try
 	{
 		mode = (mode != null) ? mode : this.mode;
@@ -4422,7 +4425,25 @@ App.prototype.saveFile = function(forceDialog, success)
 	console.log('App.js 我终于执行保存了------>')
 	console.log(this)
 	var file = this.getCurrentFile();
-	console.log(file);
+	// if (this.editor.graph.isEditing())
+	// {
+	// 	this.editor.graph.stopEditing();
+	// }
+	file.updateFileData();
+	console.log('file', file)
+	// const xml = this.getCurrentFile().shadowData;
+	// const htmls = mxUtils.htmlEntities(JSON.stringify({xml}));
+	const xml = file.data;
+	const data = xml.match(/data\-mxgraph=\"([\d\w\W]+)\}\"\>\</)[1] + '}';
+	// const json = data.replace(/\&quot\;/g, '\"').replace(/\&lt\;/g, '<').replace(/\&gt\;/g, '>')
+	// const final = JSON.parse(json);
+	// console.log(final);
+	top && top.postMessage({
+		type: 'drawio',
+		data: data
+	}, '*');
+	console.log('top', top);
+	return;
 	if (file != null)
 	{
 		console.log(1)
@@ -4458,6 +4479,7 @@ App.prototype.saveFile = function(forceDialog, success)
 		{
 
 			console.log(2)
+			// zhaodeezhu 那说明获取文件的罗辑在save中
 			this.save(file.getTitle(), done);
 		}
 		else if (file != null && file.constructor == LocalFile && file.fileHandle != null)
@@ -4746,12 +4768,17 @@ App.prototype.getPeerForMode = function(mode)
  */
 App.prototype.createFile = function(title, data, libs, mode, done, replace, folderId, tempFile, clibs)
 {
+	// zhaodeezhu
+	console.log('我是要执行的数据-------->')
+	console.log(data)
+	console.log(arguments);
 	mode = (tempFile) ? null : ((mode != null) ? mode : this.mode);
 
 	if (title != null && this.spinner.spin(document.body, mxResources.get('inserting')))
 	{
 		data = (data != null) ? data : this.emptyDiagramXml;
-		
+		console.log('我是要创建文件的数据-----》')
+		console.log(data)
 		var complete = mxUtils.bind(this, function()
 		{
 			this.spinner.stop();
@@ -4844,6 +4871,7 @@ App.prototype.createFile = function(title, data, libs, mode, done, replace, fold
 			}
 			else if (!tempFile && mode == App.MODE_DEVICE && EditorUi.nativeFileSupport)
 			{
+				console.log('fileCreated------>');
 				complete();
 				
 				this.showSaveFilePicker(mxUtils.bind(this, function(fileHandle, desc)
@@ -4864,6 +4892,7 @@ App.prototype.createFile = function(title, data, libs, mode, done, replace, fold
 			}
 			else
 			{
+				console.log('fileCreated------')
 				complete();
 				this.fileCreated(new LocalFile(this, data, title, mode == null), libs, replace, done, clibs);
 			}
@@ -4875,6 +4904,13 @@ App.prototype.createFile = function(title, data, libs, mode, done, replace, fold
 		}
 	}
 };
+
+/** 创建临时文件 */
+App.prototype.createDaokeFile = function(title, data, libs, mode, done, replace, folderId, tempFile, clibs) {
+	data = (data != null) ? data : this.emptyDiagramXml;
+	console.log(new LocalFile(this, data, title, false));
+	this.fileCreated(new LocalFile(this, data, title, false), libs, replace, done, clibs);
+}
 
 /**
  * Translates this point by the given vector.
@@ -5051,17 +5087,19 @@ App.prototype.fileCreated = function(file, libs, replace, done, clibs)
  */
 App.prototype.loadFile = function(id, sameWindow, file, success, force)
 {
+	console.log('loadFile')
 	if (urlParams['openInSameWin'] == '1' || navigator.standalone)
 	{
 		sameWindow = true;
 	}
-	
+	// 将所有的框都隐藏
 	this.hideDialog();
 	
 	var fn2 = mxUtils.bind(this, function()
 	{
 		if (id == null || id.length == 0)
 		{
+			console.log('我是要执行的fn2')
 			this.editor.setStatus('');
 			this.fileLoaded(null);
 		}
@@ -5432,7 +5470,8 @@ App.prototype.loadFile = function(id, sameWindow, file, success, force)
 	});
 	
 	var currentFile = this.getCurrentFile();
-	
+	console.log('我是当前的文件----');
+	console.log(currentFile)
 	var fn = mxUtils.bind(this, function()
 	{
 		if (force || currentFile == null || !currentFile.isModified())
@@ -5453,6 +5492,7 @@ App.prototype.loadFile = function(id, sameWindow, file, success, force)
 	
 	if (id == null || id.length == 0)
 	{
+		console.log('我是ID------')
 		fn();
 	}
 	else if (currentFile != null && !sameWindow)
@@ -6238,15 +6278,17 @@ App.prototype.save = function(name, done)
 			
 			file.handleFileError(err, err == null || err.name != 'AbortError');
 		});
-		
+		console.log(file);
 		try
 		{
 			if (name == file.getTitle())
 			{
+				console.log('我执行保存----')
 				file.save(true, success, error);
 			}
 			else
 			{
+				console.log('我执行另存为----')
 				file.saveAs(name, success, error)
 			}
 		}

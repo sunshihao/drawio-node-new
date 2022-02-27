@@ -25,7 +25,12 @@ Actions.prototype.init = function()
 	};
 
 	// File actions
-	this.addAction('new...', function() { graph.openLink(ui.getUrl()); });
+	this.addAction('new...', function() { 
+		console.log('我是新建绘图');
+		console.log(ui.getUrl());
+		return;
+		graph.openLink(ui.getUrl());
+	});
 	this.addAction('open...', function()
 	{
 		window.openNew = true;

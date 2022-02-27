@@ -291,7 +291,8 @@
 	};
 	
 	/**
-	 * Contains the default XML for an empty diagram.
+	 * zhaodeexhu 空模板的值
+	 * Contains the default XML for an empty diagram. 
 	 */
 	EditorUi.prototype.emptyDiagramXml = '<mxGraphModel><root><mxCell id="0"/><mxCell id="1" parent="0"/></root></mxGraphModel>';
 
@@ -2539,13 +2540,15 @@
 	 */
 	EditorUi.prototype.fileLoaded = function(file, noDialogs)
 	{
+		// 获取到原来的文件
 		var oldFile = this.getCurrentFile();
 		this.fileLoadedError = null;
 		this.fileEditable = null;
+		// 清空当前文件
 		this.setCurrentFile(null);
 		var result = false;
 		this.hideDialog();
-		
+		// 存在旧的文件
 		if (oldFile != null)
 		{
 			EditorUi.debug('File.closed', [oldFile]);
@@ -2556,6 +2559,7 @@
 		this.editor.graph.model.clear();
 		this.editor.undoManager.clear();
 	
+		// 没有传入文件的时候执行
 		var noFile = mxUtils.bind(this, function()
 		{
 			this.setGraphEnabled(false);
@@ -2588,13 +2592,14 @@
 
 			this.editor.setStatus('');
 			this.updateUi();
-			
+			// noDialogs为空的时候开始执行打开
 			if (!noDialogs)
 			{
 				this.showSplash();
 			}
 		});
-	
+		
+		// 有固定的文件加载执行
 		if (file != null)
 		{
 			try
@@ -2765,6 +2770,7 @@
 				}
 			}
 		}
+		// 没有文件加载的时候执行
 		else
 		{
 			noFile();
@@ -7456,7 +7462,7 @@
 		if (!this.doImportVisio && !this.loadingExtensions && !this.isOffline(true))
 		{
 			this.loadingExtensions = true;
-			mxscript('js/extensions.min.js', delayed);
+			mxscript('webapp/js/extensions.min.js', delayed);
 		}
 		else
 		{
@@ -7500,7 +7506,7 @@
 		if (!this.doImportGraphML && !this.loadingExtensions && !this.isOffline(true))
 		{
 			this.loadingExtensions = true;
-			mxscript('js/extensions.min.js', delayed);
+			mxscript('webapp/js/extensions.min.js', delayed);
 		}
 		else
 		{
@@ -7543,7 +7549,7 @@
 		if (typeof VsdxExport === 'undefined' && !this.loadingExtensions && !this.isOffline(true))
 		{
 			this.loadingExtensions = true;
-			mxscript('js/extensions.min.js', delayed);
+			mxscript('webapp/js/extensions.min.js', delayed);
 		}
 		else
 		{
@@ -7627,15 +7633,15 @@
 			if (urlParams['dev'] == '1')
 			{
 				//Lucid org chart requires orgChart layout, in production, it is part of the extemsions.min.js
-				mxscript('js/diagramly/Extensions.js', function()
+				mxscript('webapp/js/diagramly/Extensions.js', function()
 				{
-					mxscript('js/orgchart/bridge.min.js', function()
+					mxscript('webapp/js/orgchart/bridge.min.js', function()
 					{
-						mxscript('js/orgchart/bridge.collections.min.js', function()
+						mxscript('webapp/js/orgchart/bridge.collections.min.js', function()
 						{
-							mxscript('js/orgchart/OrgChart.Layout.min.js', function()
+							mxscript('webapp/js/orgchart/OrgChart.Layout.min.js', function()
 							{
-								mxscript('js/orgchart/mxOrgChartLayout.js', delayed);											
+								mxscript('webapp/js/orgchart/mxOrgChartLayout.js', delayed);											
 							});		
 						});	
 					});
@@ -7643,7 +7649,7 @@
 			}
 			else
 			{
-				mxscript('js/extensions.min.js', delayed);
+				mxscript('webapp/js/extensions.min.js', delayed);
 			}
 		}
 		else
@@ -7737,11 +7743,11 @@
 			
 			if (urlParams['dev'] == '1')
 			{
-				mxscript('js/mermaid/mermaid.min.js', delayed);
+				mxscript('webapp/js/mermaid/mermaid.min.js', delayed);
 			}
 			else
 			{
-				mxscript('js/extensions.min.js', delayed);
+				mxscript('webapp/js/extensions.min.js', delayed);
 			}
 		}
 		else
@@ -8435,7 +8441,7 @@
 		if (typeof JSZip === 'undefined' && !this.loadingExtensions && !this.isOffline(true))
 		{
 			this.loadingExtensions = true;
-			mxscript('js/extensions.min.js', delayed);
+			mxscript('webapp/js/extensions.min.js', delayed);
 		}
 		else
 		{

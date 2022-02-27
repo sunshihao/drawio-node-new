@@ -19,8 +19,11 @@ window.isSvgBrowser = true;
 // zhaodeezhu 基础路径
 // window.DRAWIO_BASE_URL = window.DRAWIO_BASE_URL || ((/.*\.draw\.io$/.test(window.location.hostname)) || (/.*\.diagrams\.net$/.test(window.location.hostname)) ?
 // 	window.location.protocol + '//' + window.location.hostname : 'https://app.diagrams.net');
+// window.DRAWIO_BASE_URL = window.DRAWIO_BASE_URL || ((/.*\.draw\.io$/.test(window.location.hostname)) || (/.*\.diagrams\.net$/.test(window.location.hostname)) ?
+// 	window.location.protocol + '//' + window.location.hostname : 'http://localhost:2008');
+
 window.DRAWIO_BASE_URL = window.DRAWIO_BASE_URL || ((/.*\.draw\.io$/.test(window.location.hostname)) || (/.*\.diagrams\.net$/.test(window.location.hostname)) ?
-	window.location.protocol + '//' + window.location.hostname : 'http://localhost:2008');
+	window.location.protocol + '//' + window.location.hostname : '/webapp');
 
 window.DRAWIO_LIGHTBOX_URL = window.DRAWIO_LIGHTBOX_URL || 'https://viewer.diagrams.net';
 window.EXPORT_URL = window.EXPORT_URL || 'https://convert.diagrams.net/node/export';

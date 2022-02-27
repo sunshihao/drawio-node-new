@@ -35,6 +35,7 @@
 		 * - lic=email: For developers only (see LicenseServlet.java)
 		 * --
 		 * - networkshapes=1: For testing network shapes (temporary)
+		 * 解析url参数的
 		 */
 		var urlParams = (function()
 		{
@@ -140,6 +141,8 @@
 		 */
 		function mxscript(src, onLoad, id, dataAppKey, noWrite)
 		{
+			console.log('--------->')
+			console.log(src)
 			var defer = onLoad == null && !noWrite;
 			
 			if ((urlParams['dev'] != '1' && typeof document.createElement('canvas').getContext === "function") ||
@@ -296,7 +299,9 @@
 				
 				function loadAppJS()
 				{
-					mxscript('js/app.min.js', function()
+					// zhaodeezhu
+					// mxscript('js/app.min.js', function()
+					mxscript('webapp/js/app.min.js', function()
 					{
 						mxScriptsLoaded = true;
 						checkAllLoaded();
@@ -322,15 +327,19 @@
 							});
 						}
 						else if (!supportedDomain)
-						{
-							mxscript('js/PostConfig.js');
+						{	
+							// zhaodeezhu
+							// mxscript('js/PostConfig.js');
+							mxscript('webapp/js/PostConfig.js');
 						}
 					});
 				};
 				
 				if (!supportedDomain || mxIsElectron)
 				{
-					mxscript('js/PreConfig.js', loadAppJS);
+					// zhaodeezhu
+					// mxscript('js/PreConfig.js', loadAppJS);
+					mxscript('webapp/js/PreConfig.js', loadAppJS);
 				}
 				else
 				{
@@ -430,10 +439,9 @@
 <body class="geEditor">
 <div id="geInfo">
 	<div class="geBlock">
-		<h1>Flowchart Maker and Online Diagram Software</h1>
+		<h1>欢迎使用道氪DrawIo</h1>
 		<p>
-			diagrams.net (formerly draw.io) is free online diagram software. You can use it as a flowchart maker, network diagram software, to create UML online, as an ER diagram tool, 
-			to design database schema, to build BPMN online, as a circuit diagram maker, and more. draw.io can import .vsdx, Gliffy&trade; and Lucidchart&trade; files .
+			绘图旅程即将开始，请您做好万全的准备，正以10000M/s的速度加载中...
 		</p>
 		<h2 id="geStatus">Loading...</h2>
 		<p>

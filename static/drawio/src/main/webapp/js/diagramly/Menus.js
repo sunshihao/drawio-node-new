@@ -84,6 +84,7 @@
 
 		editorUi.actions.addAction('new...', function()
 		{
+			console.log('我是要添加的图像');
 			var compact = editorUi.isOffline();
 			
 			if (!compact && urlParams['newTempDlg'] == '1' && editorUi.mode == App.MODE_GOOGLE)
@@ -151,6 +152,7 @@
 				return;	
 			};
 			
+			// 打开模板选择框
 			var dlg = new NewDialog(editorUi, compact, !(editorUi.mode == App.MODE_DEVICE && 'chooseFileSystemEntries' in window));
 
 			editorUi.showDialog(dlg.container, (compact) ? 350 : 620, (compact) ? 70 : 460, true, true, function(cancel)
