@@ -54,7 +54,6 @@
     "xioo": "^0.1.22"
   },
   "devDependencies": {
-    "@cvte-eus/eus-error-webpack-plugin": "^0.1.4",
     "@types/node": "^14.14.32",
     "@types/puppeteer": "^5.4.3",
     "autoprefixer": "^9.8.6",

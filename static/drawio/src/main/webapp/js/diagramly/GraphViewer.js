@@ -1330,7 +1330,8 @@ GraphViewer.prototype.addToolbar = function()
 	var tagsComponent = null;
 	var tagsDialog = null;
 	var pageInfo = null;
-	
+	// zhaodeezhu 添加编辑图标
+	tokens.push('editor');
 	for (var i = 0; i < tokens.length; i++)
 	{
 		var token = tokens[i];
@@ -1554,6 +1555,19 @@ GraphViewer.prototype.addToolbar = function()
 				}), Editor.fullscreenImage, (mxResources.get('fullscreen') || 'Fullscreen'));
 			}
 		}
+		else if (token == 'editor') {
+			addButton(mxUtils.bind(this, function() {
+				console.log('我是要触发编辑事件了--------->')
+				var viewerEditEvent = new CustomEvent('viewerEditEvent', {
+					detail: this.graphConfig
+				})
+				if(window.dispatchEvent) {  
+					window.dispatchEvent(viewerEditEvent);
+				} else {
+					window.fireEvent(viewerEditEvent);
+				}
+			}), Editor.editImage, (mxResources.get('edit') || 'edit'));
+		}
 		else if (this.graphConfig['toolbar-buttons'] != null)
 		{
 			var def = this.graphConfig['toolbar-buttons'][token];
@@ -1563,7 +1577,7 @@ GraphViewer.prototype.addToolbar = function()
 				def.elem = addButton((def.enabled == null || def.enabled) ? def.handler : function() {},
 					def.image, def.title, def.enabled);
 			}
-		}
+		} 
 	}
 	
 	if (this.graph.minimumContainerSize != null)
@@ -2148,6 +2162,7 @@ GraphViewer.createViewerForElement = function(element, callback)
 		
 		var createViewer = function(xml)
 		{
+			// zhaodeezhu 将xml转化回来
 			var xmlDoc = mxUtils.parseXml(xml);
 			var viewer = new GraphViewer(element, xmlDoc.documentElement, config);
 			
