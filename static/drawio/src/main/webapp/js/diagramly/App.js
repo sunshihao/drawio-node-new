@@ -1703,7 +1703,8 @@ App.prototype.init = function()
 				
 				if (urlParams['extAuth'] != '1' && (mode == App.MODE_DEVICE || mode == App.MODE_BROWSER))
 				{
-					this.showDownloadDesktopBanner();
+					// zhaodeezhu 取消掉获取桌面版的弹窗
+					// this.showDownloadDesktopBanner();
 				}
 				else if (urlParams['embed'] != '1' && this.getServiceName() == 'draw.io')
 
