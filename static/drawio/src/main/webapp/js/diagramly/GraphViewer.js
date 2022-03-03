@@ -1558,7 +1558,14 @@ GraphViewer.prototype.addToolbar = function()
 			}
 		}
 		else if (token == 'editor') {
-			addButton(mxUtils.bind(this, function() {
+			addButton(mxUtils.bind(this, function(e) {
+				if(e) {
+					if(e.stopPropagation) {
+						e.stopPropagation()
+					} else {
+						e.cancelBubble = true;
+					}
+				}
 				console.log('我是要触发编辑事件了--------->')
 				var viewerEditEvent = new CustomEvent('viewerEditEvent', {
 					detail: this.graphConfig
