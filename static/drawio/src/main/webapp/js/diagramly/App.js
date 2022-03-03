@@ -176,6 +176,20 @@ App = function(editor, container, lightbox)
 			}
 		}), 5000); //5 sec timeout
 	}
+	// zhaodeezhu 增加通信监听编辑的罗辑
+	const listener = mxUtils.bind(this, function(e) {
+		var data = e.data || {};
+		if(data.type == 'edit') {
+			console.log('我接受到要编辑的信息了');
+			console.log(data);
+			this.hideDialog();
+			this.updateDaokeFile(data.title, data.xml);
+		} else if (data.type === 'create') {
+			this.hideDialog();
+			this.selectTemplateCreate();
+		}
+	})
+	window.addEventListener('message', listener);
 
 	this.load();
 };
@@ -796,7 +810,8 @@ App.main = function(callback, createUi)
 			(urlParams['embed'] == '1' && urlParams['gapi'] == '1')) && isSvgBrowser &&
 			isLocalStorage && (document.documentMode == null || document.documentMode >= 10))))
 		{
-			mxscript('https://apis.google.com/js/api.js?onload=DrawGapiClientCallback', null, null, null, mxClient.IS_SVG);
+			// zhaodeezhu
+			// mxscript('https://apis.google.com/js/api.js?onload=DrawGapiClientCallback', null, null, null, mxClient.IS_SVG);
 		}
 		// Disables client
 		else if (typeof window.gapi === 'undefined')
@@ -935,10 +950,11 @@ App.main = function(callback, createUi)
 						mxscript(App.DROPBOX_URL, function()
 						{
 							// Must load this after the dropbox SDK since they use the same namespace
-							mxscript(App.DROPINS_URL, function()
-							{
-								DrawDropboxClientCallback();
-							}, 'dropboxjs', App.DROPBOX_APPKEY);
+							// zhaodeezhu
+							// mxscript(App.DROPINS_URL, function()
+							// {
+							// 	DrawDropboxClientCallback();
+							// }, 'dropboxjs', App.DROPBOX_APPKEY);
 						});
 					}
 					// Disables client
@@ -4905,11 +4921,206 @@ App.prototype.createFile = function(title, data, libs, mode, done, replace, fold
 	}
 };
 
+/** 选择模板创建 */
+App.prototype.selectTemplateCreate = function() {
+	this.setCurrentFile(null);
+	var compact = this.isOffline();
+	// editorUi.mode = 'device'
+	var dlg = new NewDialog(this, compact, !(this.mode == App.MODE_DEVICE && 'chooseFileSystemEntries' in window));
+	this.showDialog(dlg.container, (compact) ? 350 : 620, (compact) ? 70 : 460, true, true, function(cancel)
+	{
+		// this.sidebar.hideTooltip();
+		if (cancel && this.getCurrentFile() == null)
+		{
+			this.showSplash();
+		}
+	});
+
+	dlg.init();
+}
+
 /** 创建临时文件 */
 App.prototype.createDaokeFile = function(title, data, libs, mode, done, replace, folderId, tempFile, clibs) {
 	data = (data != null) ? data : this.emptyDiagramXml;
+	console.log(title, data);
 	console.log(new LocalFile(this, data, title, false));
 	this.fileCreated(new LocalFile(this, data, title, false), libs, replace, done, clibs);
+}
+
+/** 更新当前图文件 */
+App.prototype.updateDaokeFile = function(title, data) {
+	data = (data != null) ? data : this.emptyDiagramXml;
+	console.log(title, data);
+	console.log(new LocalFile(this, data, title, false));
+	this.fileDaokeUpdated(new LocalFile(this, data, title, false));
+}
+
+App.prototype.fileDaokeUpdated = function(file, libs, replace, done, clibs) {
+	var url = window.location.pathname;
+	
+	if (libs != null && libs.length > 0)
+	{
+		url += '?libs=' + libs;
+	}
+
+	if (clibs != null && clibs.length > 0)
+	{
+		url += '?clibs=' + clibs;
+	}
+	
+	url = this.getUrl(url);
+
+	// Always opens a new tab for local files to avoid losing changes
+	if (file.getMode() != App.MODE_DEVICE)
+	{
+		url += '#' + file.getHash();
+	}
+
+	// Makes sure to produce consistent output with finalized files via createFileData this needs
+	// to save the file again since it needs the newly created file ID for redirecting in HTML
+	if (this.spinner.spin(document.body, mxResources.get('inserting')))
+	{
+		var data = file.getData();
+		var dataNode = (data.length > 0) ? this.editor.extractGraphModel(
+			mxUtils.parseXml(data).documentElement, true) : null;
+		var redirect = window.location.protocol + '//' + window.location.hostname + url;
+		var node = dataNode;
+		var graph = null;
+		
+		// Handles special case where SVG files need a rendered graph to be saved
+		if (dataNode != null && /\.svg$/i.test(file.getTitle()))
+		{
+			graph = this.createTemporaryGraph(this.editor.graph.getStylesheet());
+			document.body.appendChild(graph.container);
+			node = this.decodeNodeIntoGraph(node, graph);
+		}
+		
+		file.setData(this.createFileData(dataNode, graph, file, redirect));
+
+		if (graph != null)
+		{
+			graph.container.parentNode.removeChild(graph.container);
+		}
+
+		var complete = mxUtils.bind(this, function()
+		{
+			this.spinner.stop();
+		});
+		
+		var fn = mxUtils.bind(this, function()
+		{
+			complete();
+			
+			var currentFile = this.getCurrentFile();
+			
+			if (replace == null && currentFile != null)
+			{
+				console.log('我被执行了----6')
+				replace = !currentFile.isModified() && currentFile.getMode() == null;
+			}
+			console.log('我被执行了----1')
+			var fn3 = mxUtils.bind(this, function()
+			{
+				console.log('我被执行了----7')
+				window.openFile = null;
+				this.fileLoaded(file);
+				
+				if (replace)
+				{
+					file.addAllSavedStatus();
+				}
+				
+				if (libs != null)
+				{
+					this.sidebar.showEntries(libs);
+				}
+				
+				if (clibs != null)
+				{
+					var temp = [];
+					var tokens = clibs.split(';');
+					
+					for (var i = 0; i < tokens.length; i++)
+					{
+						temp.push(decodeURIComponent(tokens[i]));
+					}
+					
+					this.loadLibraries(temp);
+				}
+			});
+			console.log('我被执行了----2')
+			var fn2 = mxUtils.bind(this, function()
+			{
+				console.log('我被执行了----3')
+				if (replace || currentFile == null || !currentFile.isModified())
+				{
+					console.log('我被执行了----5')
+					fn3();
+				}
+				else
+				{
+					console.log('我被执行了----4')
+					// zhaodeezhu 提示跳转
+					// this.confirm(mxResources.get('allChangesLost'), null, fn3,
+					// 	mxResources.get('cancel'), mxResources.get('discardChanges'));
+				}
+			});
+
+			if (done != null)
+			{
+				done();
+			}
+			
+			// Opens the file in a new window
+			if (replace != null && !replace)
+			{
+				// Opens local file in a new window
+				if (file.constructor == LocalFile)
+				{
+					window.openFile = new OpenFile(function()
+					{
+						window.openFile = null;
+					});
+						
+					window.openFile.setData(file.getData(), file.getTitle(), file.getMode() == null);
+				}
+
+				if (done != null)
+				{
+					done();
+				}
+				console.log('我被执行了----9');
+				fn3();
+				// zhaodeezhu
+				// window.openWindow(url, null, fn2);
+			}
+			else
+			{
+				fn2();
+			}
+		});
+		
+		// Updates data in memory for local files
+		if (file.constructor == LocalFile)
+		{
+			fn();
+		}
+		else
+		{
+			file.saveFile(file.getTitle(), false, mxUtils.bind(this, function()
+			{
+				fn();
+			}), mxUtils.bind(this, function(resp)
+			{
+				complete();
+
+				if (resp == null || resp.name != 'AbortError')
+				{
+					this.handleError(resp);
+				}
+			}));
+		}
+	}
 }
 
 /**
@@ -4976,14 +5187,17 @@ App.prototype.fileCreated = function(file, libs, replace, done, clibs)
 			complete();
 			
 			var currentFile = this.getCurrentFile();
+			console.log('----------->', currentFile);
 			
 			if (replace == null && currentFile != null)
 			{
+				console.log('我被执行了----6')
 				replace = !currentFile.isModified() && currentFile.getMode() == null;
 			}
-			
+			console.log('我被执行了----1')
 			var fn3 = mxUtils.bind(this, function()
 			{
+				console.log('我被执行了----7')
 				window.openFile = null;
 				this.fileLoaded(file);
 				
@@ -5010,15 +5224,19 @@ App.prototype.fileCreated = function(file, libs, replace, done, clibs)
 					this.loadLibraries(temp);
 				}
 			});
-
+			console.log('我被执行了----2')
 			var fn2 = mxUtils.bind(this, function()
 			{
+				console.log('我被执行了----3')
 				if (replace || currentFile == null || !currentFile.isModified())
 				{
+					console.log('我被执行了----5')
 					fn3();
 				}
 				else
 				{
+					console.log('我被执行了----4')
+					// zhaodeezhu 提示跳转
 					this.confirm(mxResources.get('allChangesLost'), null, fn3,
 						mxResources.get('cancel'), mxResources.get('discardChanges'));
 				}
@@ -5047,7 +5265,7 @@ App.prototype.fileCreated = function(file, libs, replace, done, clibs)
 				{
 					done();
 				}
-				
+				console.log('我被执行了----9');
 				window.openWindow(url, null, fn2);
 			}
 			else

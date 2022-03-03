@@ -2595,7 +2595,22 @@
 			// noDialogs为空的时候开始执行打开
 			if (!noDialogs)
 			{
-				this.showSplash();
+				// 不打开文件选择框了-----
+				// this.showSplash();
+				var compact = this.isOffline();
+				// editorUi.mode = 'device'
+				var dlg = new NewDialog(this, compact, !(this.mode == App.MODE_DEVICE && 'chooseFileSystemEntries' in window));
+				this.showDialog(dlg.container, (compact) ? 350 : 620, (compact) ? 70 : 460, true, true, function(cancel)
+				{
+					// this.sidebar.hideTooltip();
+
+					if (cancel && this.getCurrentFile() == null)
+					{
+						this.showSplash();
+					}
+				});
+			
+				dlg.init();
 			}
 		});
 		

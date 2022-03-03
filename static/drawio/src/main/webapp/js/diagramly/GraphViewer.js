@@ -1331,7 +1331,9 @@ GraphViewer.prototype.addToolbar = function()
 	var tagsDialog = null;
 	var pageInfo = null;
 	// zhaodeezhu 添加编辑图标
-	tokens.push('editor');
+	if(GraphViewer.editableCard) {
+		tokens.push('editor');
+	}
 	for (var i = 0; i < tokens.length; i++)
 	{
 		var token = tokens[i];
@@ -2082,11 +2084,14 @@ GraphViewer.prototype.updateTitle = function(title)
 	}
 };
 
+GraphViewer.editableCard = true;
+
 /**
  * 
  */
-GraphViewer.processElements = function(classname)
+GraphViewer.processElements = function(classname, editable = true)
 {
+	GraphViewer.editableCard = editable;
 	mxUtils.forEach(GraphViewer.getElementsByClassName(classname || 'mxgraph'), function(div)
 	{
 		try
