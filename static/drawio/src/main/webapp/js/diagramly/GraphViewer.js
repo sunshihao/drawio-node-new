@@ -1636,8 +1636,12 @@ GraphViewer.prototype.addToolbar = function()
 			{
 				if (this.graphConfig['toolbar-position'] != 'inline')
 				{
+					// zhaodeezhu toolbar 鼠标划到图上执行
 					toolbar.style.marginTop = -this.toolbarHeight + 'px';
-					toolbar.style.top = r.top + 1 + 'px';
+					// toolbar.style.top = r.top + 1 + 'px';
+					toolbar.style.top = '0' + 'px';
+					toolbar.style.left = '0' + 'px';
+					container.style.overflow = 'visible';
 				}
 				else
 				{
@@ -1650,7 +1654,10 @@ GraphViewer.prototype.addToolbar = function()
 				container.style.border = '1px solid #d0d0d0';
 			}
 			
-			document.body.appendChild(toolbar);
+			// document.body.appendChild(toolbar);
+			// zhaodeezhu toolbar 将toolbar插在父元素上
+			container.appendChild(toolbar);
+
 
 			var hideToolbar = mxUtils.bind(this, function()
 			{
@@ -1681,7 +1688,6 @@ GraphViewer.prototype.addToolbar = function()
 					
 					source = source.parentNode;
 				}
-				
 				hideToolbar();
 			});
 			
