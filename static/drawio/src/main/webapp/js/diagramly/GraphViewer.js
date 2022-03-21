@@ -1637,11 +1637,11 @@ GraphViewer.prototype.addToolbar = function()
 				if (this.graphConfig['toolbar-position'] != 'inline')
 				{
 					// zhaodeezhu toolbar 鼠标划到图上执行
-					toolbar.style.marginTop = -this.toolbarHeight + 'px';
+					// toolbar.style.marginTop = -this.toolbarHeight + 'px';
 					// toolbar.style.top = r.top + 1 + 'px';
 					toolbar.style.top = '0' + 'px';
 					toolbar.style.left = '0' + 'px';
-					container.style.overflow = 'visible';
+					// container.style.overflow = 'visible';
 				}
 				else
 				{
