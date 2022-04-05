@@ -1795,7 +1795,8 @@ GraphViewer.prototype.addClickHandler = function(graph, ui)
 			(!mxEvent.isTouchEvent(evt) ||
 			this.toolbarItems.length == 0))
 		{
-			this.showLightbox();
+			// 点击图放大
+			// this.showLightbox();
 		}
 	}));
 };
@@ -2170,13 +2171,16 @@ GraphViewer.getElementsByClassName = function(classname)
 /**
  * Adds the given array of stencils to avoid dynamic loading of shapes.
  */
-GraphViewer.createViewerForElement = function(element, callback)
+GraphViewer.createViewerForElement = function(element, callback, noToolbar = false)
 {
 	var data = element.getAttribute('data-mxgraph');
 	
 	if (data != null)
 	{
 		var config = JSON.parse(data);
+		if(noToolbar) {
+			config.toolbar = null;
+		}
 		
 		var createViewer = function(xml)
 		{
@@ -2201,6 +2205,7 @@ GraphViewer.createViewerForElement = function(element, callback)
 		{
 			createViewer(config.xml);
 		}
+		return this.graph
 	}
 };
 
