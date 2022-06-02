@@ -1,5 +1,5 @@
 bin
-build
+# build
 classes
 node_modules
 .vscode/settings.json
