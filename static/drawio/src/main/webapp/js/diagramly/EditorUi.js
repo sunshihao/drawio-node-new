@@ -2600,15 +2600,15 @@
 				var compact = this.isOffline();
 				// editorUi.mode = 'device'
 				var dlg = new NewDialog(this, compact, !(this.mode == App.MODE_DEVICE && 'chooseFileSystemEntries' in window));
-				this.showDialog(dlg.container, (compact) ? 350 : 620, (compact) ? 70 : 460, true, true, function(cancel)
+				this.showDialog(dlg.container, (compact) ? 350 : 620, (compact) ? 70 : 460, true, true, mxUtils.bind(this, function(cancel)
 				{
 					// this.sidebar.hideTooltip();
-
+					console.log(this);
 					if (cancel && this.getCurrentFile() == null)
 					{
 						this.showSplash();
 					}
-				});
+				}));
 			
 				dlg.init();
 			}
