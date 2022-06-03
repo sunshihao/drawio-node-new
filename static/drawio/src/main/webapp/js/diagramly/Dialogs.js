@@ -4066,6 +4066,10 @@ var NewDialog = function(editorUi, compact, showName, callback, createOnly, canc
 
 	var cancelBtn = mxUtils.button(mxResources.get('cancel'), function()
 	{
+		if (window.top !== window.self) {
+			window.top.postMessage({ type: 'drawio-cancel',data: {} }, '*');
+			return;
+		}
 		if (cancelCallback != null)
 		{
 			cancelCallback();
