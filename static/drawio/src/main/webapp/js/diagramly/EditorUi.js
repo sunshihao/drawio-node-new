@@ -2600,14 +2600,12 @@
 				var compact = this.isOffline();
 				// editorUi.mode = 'device'
 				var dlg = new NewDialog(this, compact, !(this.mode == App.MODE_DEVICE && 'chooseFileSystemEntries' in window));
-				this.showDialog(dlg.container, (compact) ? 350 : 620, (compact) ? 70 : 460, true, true, mxUtils.bind(this, function(cancel)
+				this.showDialog(dlg.container, (compact) ? 350 : 620, (compact) ? 70 : 460, true, true, 
+				mxUtils.bind(this, function(cancel)
 				{
 					// this.sidebar.hideTooltip();
 					if (window.top !== window.self) {
-						window.top.postMessage({
-							type: 'drawio-cancel',
-							data: {}
-						}, '*')
+						window.top.postMessage({ type: 'drawio-cancel',data: {} }, '*')
 					} else {
 						if (cancel && this.getCurrentFile() == null)
 						{
