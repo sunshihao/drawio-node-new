@@ -295,6 +295,7 @@
 	 * Contains the default XML for an empty diagram. 
 	 */
 	EditorUi.prototype.emptyDiagramXml = '<mxGraphModel><root><mxCell id="0"/><mxCell id="1" parent="0"/></root></mxGraphModel>';
+	// EditorUi.prototype.emptyDiagramXml = `<mxfile host="drawio.xiooshow.com" modified="2022-04-06T09:04:52.571Z" agent="5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/99.0.4844.84 Safari/537.36" etag="eo6NW-VS5gPBnZmB8mXx" version="16.5.6" type="device"><diagram id="ja6d1TrSwdeSCgRRwp5y" name="第 1 页">5Vhdc6IwFP01PNpRkBQfW2u7H92ZnenMfjwGcoFsA5cJQbC/foMEFVHX7tq1nc74kJx783VOThK0nGlS3UmaxV+QgbDsIass58ay7dHYtq36N2SLBnG9cQNEkjOTtAYe+BMYcGjQgjPIO4kKUSiedcEA0xQC1cGolFh200IU3VEzGkEPeAio6KPfOVNxg3r25Rr/ADyK25FHZNJEEtomm5XkMWVYbkDOzHKmElE1paSagqjJa3lp2t3uia4mJiFVxzT49O0uuS3VR3v++fLJ4ZnIEjUwy8jVol0wML1+U0WpYowwpWK2Rq8lFimDutehrq1z7hEzDY40+AuUWhgxaaFQQ7FKhInqCcvFj7r9hdtWf5rulpWbqlNbmFpQyPly3LqTZuL1bPfyYaAcCxnAARLMFlVURqAO5JGVanq7AyagJ6fbSRBU8Xl3HtTsu2iVt5ZGF4w6z1DKTHJORWFGoskAGFcoexp2FSpjruAho0sOSm3TrhohF2KKQndTt3UYBS8MNJ4riY+wESGBB35YRx5BBXFHhzlIBdVhJfrMtQ2IsYg5I0atZcq141ZYvOG2tt3JyZ78hS06u/NsHjmhLZwjbeGd0xZOzxZM0pLjINVX0Vs3xth5bcZwe3RXHHHAMMhPS7YLHhvvItuzfYeQbbIjQfO8Y4F/It6ejDvEO+TcxLfvofd9JJEjjyT3nEcS2XMkWTYRetLXvr6wSVSXMlFEPO0LK4R+3sKfTUPzrHnzhryqlT35AWRvHUCr+oYPvB028F7MBqM+W+/PBt5bsIHXs8GcQwn91+rr2e7O5LVt9/6r35oR62pqXemCZ13fWt4s1/ugR2rNA9efsffUB/EVc644pjrko1KYaLrahCvBozqgcItt/b2a1Z0lVVR/2l/4NOfBxXKw7n27UmHYv8fDMLSDnY8mRnziktPoRuytd9Jox3U93CHcxH0p4frv0v8nUcIFLPaJdCKrbFPuDI+kfAU+g3NdXf9Psoxt/NvkzH4D</diagram></mxfile>`;
 
 	/**
 	 * 
@@ -847,16 +848,16 @@
 		{
 			try
 			{
-		    	var idx = data.indexOf('&lt;mxfile ');
+		    	var idx = data.indexOf('<mxfile ');
 		    	
 		    	if (idx >= 0)
 		    	{
-		    		var idx2 = data.lastIndexOf('&lt;/mxfile&gt;');
+		    		var idx2 = data.lastIndexOf('</mxfile>');
 		    		
 		    		if (idx2 > idx)
 		    		{
-		    			result = data.substring(idx, idx2 + 15).replace(/&gt;/g, '>').
-		    				replace(/&lt;/g, '<').replace(/\\&quot;/g, '"').replace(/\n/g, '');
+		    			result = data.substring(idx, idx2 + 15).replace(/>/g, '>').
+		    				replace(/</g, '<').replace(/\\"/g, '"').replace(/\n/g, '');
 		    		}
 		    	}
 		    	else
@@ -10043,15 +10044,14 @@
 						// Closes current file if blank and no undoable changes
 						var noImport = evt.dataTransfer.files.length == 1 &&
 							this.isBlankFile() && !this.canUndo();
-						
-						if (urlParams['embed'] != '1' && (mxEvent.isShiftDown(evt) || noImport))
+						// 不需要在图文件是空白的时候执行加载图文件的罗辑
+						if (urlParams['embed'] != '1' && (mxEvent.isShiftDown(evt) || noImport) && false)
 						{
 							if (!mxEvent.isShiftDown(evt) && noImport &&
 								this.getCurrentFile() != null)
 							{
 								this.fileLoaded(null);
 							}
-
 							this.openFiles(evt.dataTransfer.files, true);
 						}
 						else
