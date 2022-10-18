@@ -106,12 +106,25 @@
 	border-radius:3px;
 }
 .geStatusAlertOrange {
-	padding:4px 8px;
+	padding:4px 20px;
 	background-color:rgb(242, 147, 30);
 	border:rgb(240, 135, 5);
 	color:#000000 !important;
 	border-radius:3px;
 	opacity:0.8;
+}
+
+.geBackAlertOrange {
+	padding:4px 20px;
+	background-color:red;
+	border:rgb(240, 135, 5);
+	color:#fff !important;
+	border-radius:3px;
+	opacity:0.8;
+	cursor: pointer;
+}
+.geBackAlertOrange:hover {
+	opacity:1;
 }
 .geStatusAlertOrange:hover {
 	opacity:1;
