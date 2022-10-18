@@ -69,19 +69,19 @@ export = class Config implements IServerConfig {
     {
       openPath: 'static',
       options: {
-        maxAge: 60 * 60 * 1000 * 2
+        maxAge: 60 * 60 * 1000 * 12
       }
     },
     {
       openPath: 'static/drawio/src/main',
       options: {
-        maxAge: 60 * 60 * 1000 * 2
+        maxAge: 60 * 60 * 1000 * 12
       }
     },
     {
       openPath: 'static/drawio/src/main/webapp',
       options: {
-        maxAge: 60 * 60 * 1000 * 2
+        maxAge: 60 * 60 * 1000 * 12
       }
     }
   ]
