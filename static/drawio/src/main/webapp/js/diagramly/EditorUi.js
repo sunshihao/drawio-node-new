@@ -295,7 +295,6 @@
 	 * Contains the default XML for an empty diagram. 
 	 */
 	EditorUi.prototype.emptyDiagramXml = '<mxGraphModel><root><mxCell id="0"/><mxCell id="1" parent="0"/></root></mxGraphModel>';
-
 	/**
 	 * 
 	 */
@@ -847,16 +846,16 @@
 		{
 			try
 			{
-		    	var idx = data.indexOf('&lt;mxfile ');
+		    	var idx = data.indexOf('<mxfile ');
 		    	
 		    	if (idx >= 0)
 		    	{
-		    		var idx2 = data.lastIndexOf('&lt;/mxfile&gt;');
+		    		var idx2 = data.lastIndexOf('</mxfile>');
 		    		
 		    		if (idx2 > idx)
 		    		{
-		    			result = data.substring(idx, idx2 + 15).replace(/&gt;/g, '>').
-		    				replace(/&lt;/g, '<').replace(/\\&quot;/g, '"').replace(/\n/g, '');
+		    			result = data.substring(idx, idx2 + 15).replace(/>/g, '>').
+		    				replace(/</g, '<').replace(/\\"/g, '"').replace(/\n/g, '');
 		    		}
 		    	}
 		    	else
@@ -10043,15 +10042,14 @@
 						// Closes current file if blank and no undoable changes
 						var noImport = evt.dataTransfer.files.length == 1 &&
 							this.isBlankFile() && !this.canUndo();
-						
-						if (urlParams['embed'] != '1' && (mxEvent.isShiftDown(evt) || noImport))
+						// 不需要在图文件是空白的时候执行加载图文件的罗辑
+						if (urlParams['embed'] != '1' && (mxEvent.isShiftDown(evt) || noImport) && false)
 						{
 							if (!mxEvent.isShiftDown(evt) && noImport &&
 								this.getCurrentFile() != null)
 							{
 								this.fileLoaded(null);
 							}
-
 							this.openFiles(evt.dataTransfer.files, true);
 						}
 						else

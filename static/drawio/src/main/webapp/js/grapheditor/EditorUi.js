@@ -4331,7 +4331,10 @@ EditorUi.prototype.createUi = function()
 	// Adds status bar in menubar
 	if (this.menubar != null)
 	{
+		// 添加保存按钮
 		this.statusContainer = this.createStatusContainer();
+		// 添加退出按钮
+		this.backContainer = this.createBackContainer();
 	
 		// Connects the status bar to the editor status
 		this.editor.addListener('statusChanged', mxUtils.bind(this, function()
@@ -4340,8 +4343,9 @@ EditorUi.prototype.createUi = function()
 		}));
 	
 		this.setStatusText(this.editor.getStatus());
+		this.menubar.container.appendChild(this.backContainer);
+		// 将保存按钮添加到tip栏上
 		this.menubar.container.appendChild(this.statusContainer);
-		
 		// Inserts into DOM
 		this.container.appendChild(this.menubarContainer);
 	}
@@ -4413,6 +4417,35 @@ EditorUi.prototype.createStatusContainer = function()
 	var container = document.createElement('a');
 	container.className = 'geItem geStatus';
 
+	return container;
+};
+
+EditorUi.prototype.createBackContainer = function()
+{
+	var container = document.createElement('a');
+	var exit = mxUtils.htmlEntities(mxResources.get('exit'));
+	container.innerHTML = `<div class="geBackAlertOrange">${exit}</div>`
+	container.className = 'geItem geStatus';
+	// 我要去执行退出
+	mxEvent.addListener(container, 'click', mxUtils.bind(this, function()
+	{
+		console.log('我执行了退出了------');
+		console.log(this.editor.getStatus());
+		const saveStatus = this.editor.getStatus();
+		// 说明存在没保存的数据，要先弹窗提醒
+		if (saveStatus) {
+			const value = confirm('您存在未保存的数据,是否保存?不保存请点击取消，将会直接退出，保存请点击确定');
+			if (value) {
+				this.actions.get((this.mode == null || !this.currentFile.isEditable()) ?
+				'saveAs' : 'save').funct();
+				return;
+			}
+		}
+		top && top.postMessage({
+			type: 'drawio-cancel'
+			// data: data
+		}, '*');
+	}));
 	return container;
 };
 
